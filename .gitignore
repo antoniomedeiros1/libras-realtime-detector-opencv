@@ -1,5 +1,8 @@
 # virtual env
 .venv
 
-# model
+# keras model
 *.h5
+labels.txt
+
+*.task
