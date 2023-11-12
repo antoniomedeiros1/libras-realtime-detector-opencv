@@ -67,16 +67,16 @@ def draw_landmarks_on_image(rgb_image, detection_result):
       solutions.drawing_styles.get_default_hand_connections_style())
 
     # Get the top left corner of the detected hand's bounding box.
-    height, width, _ = annotated_image.shape
-    x_coordinates = [landmark.x for landmark in hand_landmarks]
-    y_coordinates = [landmark.y for landmark in hand_landmarks]
-    text_x = int(min(x_coordinates) * width)
-    text_y = int(min(y_coordinates) * height) - MARGIN
+    # height, width, _ = annotated_image.shape
+    # x_coordinates = [landmark.x for landmark in hand_landmarks]
+    # y_coordinates = [landmark.y for landmark in hand_landmarks]
+    # text_x = int(min(x_coordinates) * width)
+    # text_y = int(min(y_coordinates) * height) - MARGIN
 
     # Draw handedness (left or right hand) on the image.
-    cv2.putText(annotated_image, f"{handedness[0].category_name}",
-                (text_x, text_y), cv2.FONT_HERSHEY_DUPLEX,
-                FONT_SIZE, HANDEDNESS_TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
+    # cv2.putText(annotated_image, f"{handedness[0].category_name}",
+    #             (text_x, text_y), cv2.FONT_HERSHEY_DUPLEX,
+    #             FONT_SIZE, HANDEDNESS_TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
 
   return annotated_image
 
@@ -89,38 +89,35 @@ with HandLandmarker.create_from_options(options) as landmarker:
 
   while True:
 
-    # os.system('sleep 5')
-
     # Grab the webcamera's image.
     ret, image = camera.read()
+    
 
-    # Resize the raw image into (224-height,224-width) pixels
-    image = cv2.resize(image, (224, 224), interpolation=cv2.INTER_AREA)
-    # cv2.imshow("Webcam Image", image)
-
-    try:  
+    try:
 
       mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
       detection_result = landmarker.detect(mp_image)
       # print(f'detection_result: {detection_result}')
       annotated_image = draw_landmarks_on_image(mp_image.numpy_view(), detection_result)
-      cv2.imshow('Test', cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
+      cv2.imshow('Test', annotated_image)
 
-    #   # Make the image a numpy array and reshape it to the models input shape.
-    #   mp_image = np.asarray(mp_image, dtype=np.float32).reshape(1, 224, 224, 3)
+      preprocessed_image = cv2.resize(annotated_image, (224, 224), interpolation=cv2.INTER_AREA)
 
-    #   # Normalize the image array
-    #   mp_image = (mp_image / 127.5) - 1
+      # Make the image a numpy array and reshape it to the models input shape.
+      preprocessed_image = np.asarray(preprocessed_image, dtype=np.float32).reshape(1, 224, 224, 3)
 
-    #   # Predicts the model
-    #   prediction = model.predict(mp_image)
-    #   index = np.argmax(prediction)
-    #   class_name = class_names[index]
-    #   confidence_score = prediction[0][index]
+      # Normalize the image array
+      preprocessed_image = (preprocessed_image / 127.5) - 1
 
-    #   # Print prediction and confidence score
-    #   print("Class:", class_name[2:], end="")
-    #   print("Confidence Score:", str(np.round(confidence_score * 100))[:-2], "%")
+      # Predicts the model
+      prediction = model.predict(preprocessed_image)
+      index = np.argmax(prediction)
+      class_name = class_names[index]
+      confidence_score = prediction[0][index]
+
+      # Print prediction and confidence score
+      print("Class:", class_name[2:], end="")
+      print("Confidence Score:", str(np.round(confidence_score * 100))[:-2], "%")
 
     except Exception as e:
       print(e)
