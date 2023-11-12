@@ -84,22 +84,22 @@ def draw_landmarks_on_image(rgb_image, detection_result):
 
 camera = cv2.VideoCapture(0)
 
-
 with HandLandmarker.create_from_options(options) as landmarker:
 
   while True:
 
     # Grab the webcamera's image.
     ret, image = camera.read()
+    image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     
-
     try:
 
       mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
       detection_result = landmarker.detect(mp_image)
       # print(f'detection_result: {detection_result}')
       annotated_image = draw_landmarks_on_image(mp_image.numpy_view(), detection_result)
-      cv2.imshow('Test', annotated_image)
+      cv2.imshow('Test', cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
 
       preprocessed_image = cv2.resize(annotated_image, (224, 224), interpolation=cv2.INTER_AREA)
 
