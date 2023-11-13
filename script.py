@@ -11,8 +11,8 @@ from mediapipe.framework.formats import landmark_pb2
 
 MARGIN = 10  # pixels
 FONT_SIZE = 1
-FONT_THICKNESS = 1
-HANDEDNESS_TEXT_COLOR = (88, 205, 54) # vibrant green
+FONT_THICKNESS = 2
+HANDEDNESS_TEXT_COLOR = (0, 0, 0)
 
 model_path = './hand_landmarker.task'
 
@@ -82,6 +82,30 @@ def draw_landmarks_on_image(rgb_image, detection_result):
 
 # CAMERA can be 0 or 1 based on default camera of your computer
 
+def draw_label(rgb_image, detection_result, sign_classification):
+  hand_landmarks_list = detection_result.hand_landmarks
+  annotated_image = np.copy(rgb_image)
+  for idx in range(len(hand_landmarks_list)):
+    hand_landmarks = hand_landmarks_list[idx]
+
+    height, width, _ = annotated_image.shape
+    x_coordinates = [landmark.x for landmark in hand_landmarks]
+    y_coordinates = [landmark.y for landmark in hand_landmarks]
+    text_x = int(min(x_coordinates) * width)
+    text_y = int(min(y_coordinates) * height) - MARGIN
+
+    text_size, _ = cv2.getTextSize(f"{sign_classification}", cv2.FONT_HERSHEY_DUPLEX, FONT_SIZE, FONT_THICKNESS)
+    text_w, text_h = text_size
+
+    cv2.rectangle(annotated_image, (text_x, text_y - text_h), (text_x + text_w, text_y), (255,255,255), -1)
+
+    cv2.putText(annotated_image, f"{sign_classification}",
+                (text_x, text_y), cv2.FONT_HERSHEY_DUPLEX,
+                FONT_SIZE, HANDEDNESS_TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
+    break
+
+  return annotated_image
+
 camera = cv2.VideoCapture(0)
 
 with HandLandmarker.create_from_options(options) as landmarker:
@@ -99,7 +123,7 @@ with HandLandmarker.create_from_options(options) as landmarker:
       detection_result = landmarker.detect(mp_image)
       # print(f'detection_result: {detection_result}')
       annotated_image = draw_landmarks_on_image(mp_image.numpy_view(), detection_result)
-      cv2.imshow('Test', cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
+      # cv2.imshow('Test', cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR))
 
       preprocessed_image = cv2.resize(annotated_image, (224, 224), interpolation=cv2.INTER_AREA)
 
@@ -114,6 +138,10 @@ with HandLandmarker.create_from_options(options) as landmarker:
       index = np.argmax(prediction)
       class_name = class_names[index]
       confidence_score = prediction[0][index]
+
+      # label image
+      labeled_image = draw_label(annotated_image, detection_result, class_name[2:])
+      cv2.imshow('Test', cv2.cvtColor(labeled_image, cv2.COLOR_RGB2BGR))
 
       # Print prediction and confidence score
       print("Class:", class_name[2:], end="")
