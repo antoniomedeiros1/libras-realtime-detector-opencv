@@ -9,3 +9,7 @@ labels.txt
 
 *.png
 *.jpeg
+
+# data
+TreinamentoNovo
+**/*.csv
