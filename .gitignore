@@ -1,9 +1,13 @@
 # virtual env
 .venv
 
+**/__pycache__
+
 # keras model
 *.h5
 labels.txt
+
+*.tflite
 
 # *.task
 

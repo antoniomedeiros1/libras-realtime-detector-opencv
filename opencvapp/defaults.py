@@ -1,0 +1,8 @@
+
+## opencv
+MARGIN = 10
+FONT_SIZE = 1
+FONT_THICKNESS = 2
+HANDEDNESS_TEXT_COLOR = (0, 0, 0)
+
+

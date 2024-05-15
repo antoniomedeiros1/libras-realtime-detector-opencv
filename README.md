@@ -7,3 +7,9 @@ Executar o comando a seguir para fazer a instalção das bibliotecas (de prefer�
 ```sh
 pip install -r requirements.txt
 ```
+
+Para executar o app basta rodar:
+
+```sh
+python -m opencvapp
+```
