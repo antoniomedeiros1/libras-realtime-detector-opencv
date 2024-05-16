@@ -2,6 +2,7 @@ from opencvapp.defaults import *
 
 import cv2
 import numpy as np
+import tensorflow as tf
 
 import mediapipe as mp
 from mediapipe.tasks import python
@@ -58,8 +59,13 @@ def preprocess_image(image: np.ndarray, landmarker = landamrker):
   detection_result = landmarker.detect(mp_image)    
   preprocessed_image = draw_landmarks_on_image(mp_image.numpy_view(), detection_result)
   preprocessed_image_landmarks = cv2.cvtColor(preprocessed_image, cv2.COLOR_RGB2BGR)
-  preprocessed_image = cv2.resize(preprocessed_image_landmarks, (224, 224), interpolation=cv2.INTER_AREA)
-  preprocessed_image = np.asarray(preprocessed_image, dtype=np.uint8).reshape(1, 224, 224, 3)
+  # preprocessed_image = cv2.resize(preprocessed_image_landmarks, (224, 224), interpolation=cv2.INTER_AREA)
+  # preprocessed_image = np.asarray(preprocessed_image, dtype=np.uint8).reshape(1, 224, 224, 3)
+  # preprocessed_image = cv2.cvtColor(preprocessed_image, cv2.COLOR_BGR2RGB)
+  preprocessed_image = tf.convert_to_tensor(preprocessed_image, dtype=np.uint8)
+  preprocessed_image = tf.image.resize(preprocessed_image, [224, 224])
+  preprocessed_image = tf.cast(preprocessed_image, tf.uint8)
+  preprocessed_image = tf.expand_dims(preprocessed_image, axis=0)
   return preprocessed_image, preprocessed_image_landmarks
 
 def draw_label(image, label):

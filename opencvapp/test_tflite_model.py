@@ -6,17 +6,11 @@ import tensorflow as tf
 from model import tflite_predict, tflite_all_results
 
 image = cv2.imread('./Dois2004.png')
-# image = cv2.imread('./Febre1007.png')
-
-preprocessed_image = cv2.resize(image, (224, 224))
-preprocessed_image = np.expand_dims(preprocessed_image, axis=0)
-preprocessed_image = np.asarray(preprocessed_image, dtype=np.uint8).reshape(1, 224, 224, 3)
-
-# image = tf.io.read_file('./Febre1007.png')
-# preprocessed_image = tf.image.decode_png(image, channels=3)
-# preprocessed_image = tf.image.resize(preprocessed_image, [224, 224])
-# # preprocessed_image = tf.cast(preprocessed_image, tf.uint8)
-# preprocessed_image = tf.expand_dims(preprocessed_image, axis=0)
+rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+preprocessed_image = tf.convert_to_tensor(rgb, dtype=np.uint8)
+preprocessed_image = tf.image.resize(preprocessed_image, [224, 224])
+preprocessed_image = tf.cast(preprocessed_image, tf.uint8)
+preprocessed_image = tf.expand_dims(preprocessed_image, axis=0)
 
 output = tflite_all_results(preprocessed_image)
 # print(output)

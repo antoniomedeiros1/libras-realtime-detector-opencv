@@ -10,7 +10,7 @@ def main():
   
   while True:
     ret, image = camera.read()
-    # image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+    image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
     # image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     
     try:

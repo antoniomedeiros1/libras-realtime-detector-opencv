@@ -15,28 +15,28 @@ def tflite_predict(image):
   # print('Input details:', input_details)
   # print('Output details:', output_details)
 
-  input_type = input_details[0]['dtype']
-  if input_type == np.uint8:
-    input_scale, input_zero_point = input_details[0]['quantization']
-    print("Input scale:", input_scale)
-    print("Input zero point:", input_zero_point)
-    print()
-    image = (image / input_scale) + input_zero_point
-    image = np.around(image).astype('uint8')
+  # input_type = input_details[0]['dtype']
+  # if input_type == np.uint8:
+  #   input_scale, input_zero_point = input_details[0]['quantization']
+  #   print("Input scale:", input_scale)
+  #   print("Input zero point:", input_zero_point)
+  #   print()
+  #   image = (image / input_scale) + input_zero_point
+  #   image = np.around(image).astype('uint8')
 
   interpreter.allocate_tensors()
   interpreter.set_tensor(input_details[0]['index'], image)
   interpreter.invoke()
   output = interpreter.get_tensor(output_details[0]['index'])
 
-  output_type = output_details[0]['dtype']
-  if output_type == np.uint8:
-    output_scale, output_zero_point = output_details[0]['quantization']
-    print("Raw output scores:", output)
-    print("Output scale:", output_scale)
-    print("Output zero point:", output_zero_point)
-    print()
-    output = output_scale * (output.astype(np.float32) - output_zero_point)
+  # output_type = output_details[0]['dtype']
+  # if output_type == np.uint8:
+  #   output_scale, output_zero_point = output_details[0]['quantization']
+  #   print("Raw output scores:", output)
+  #   print("Output scale:", output_scale)
+  #   print("Output zero point:", output_zero_point)
+  #   print()
+  #   output = output_scale * (output.astype(np.float32) - output_zero_point)
     
   prediction = interpreter.get_tensor(output_details[0]['index'])
   index = np.argmax(prediction[0])
@@ -48,27 +48,27 @@ def tflite_all_results(image):
   # print('Input details:', input_details)
   # print('Output details:', output_details)
 
-  input_type = input_details[0]['dtype']
-  if input_type == np.uint8:
-    input_scale, input_zero_point = input_details[0]['quantization']
-    # print("Input scale:", input_scale)
-    # print("Input zero point:", input_zero_point)
-    # print()
-    image = (image / input_scale) + input_zero_point
-    image = np.around(image).astype('uint8')
+  # input_type = input_details[0]['dtype']
+  # if input_type == np.int8:
+  #   input_scale, input_zero_point = input_details[0]['quantization']
+  #   # print("Input scale:", input_scale)
+  #   # print("Input zero point:", input_zero_point)
+  #   # print()
+  #   image = (image / input_scale) + input_zero_point
+  #   image = np.around(image).astype('uint8')
 
   interpreter.allocate_tensors()
   interpreter.set_tensor(input_details[0]['index'], image)
   interpreter.invoke()
   output = interpreter.get_tensor(output_details[0]['index'])
   
-  output_type = output_details[0]['dtype']
-  if output_type == np.uint8:
-    output_scale, output_zero_point = output_details[0]['quantization']
+  # output_type = output_details[0]['dtype']
+  # if output_type == np.int8:
+  #   output_scale, output_zero_point = output_details[0]['quantization']
     # print("Raw output scores:", output)
     # print("Output scale:", output_scale)
     # print("Output zero point:", output_zero_point)
     # print()
-    output = output_scale * (output.astype(np.float32) - output_zero_point)
+    # output = output_scale * (output.astype(np.float32) - output_zero_point)
 
   return output
