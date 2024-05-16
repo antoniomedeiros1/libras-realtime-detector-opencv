@@ -112,7 +112,6 @@ with HandLandmarker.create_from_options(options) as landmarker:
 
   while True:
 
-    # Grab the webcamera's image.
     ret, image = camera.read()
     image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
